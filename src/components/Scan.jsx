@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { playLandingMusic, stopLandingMusic } from "../sounds";
 
 const scanLines = [
   "Scanning memory database…",
@@ -24,6 +25,12 @@ export default function Scan({ onComplete }) {
     return () => clearInterval(interval);
   }, []);
 
+  /* Play retro music during scan (AudioContext unlocked by START SCAN tap) */
+  useEffect(() => {
+    playLandingMusic();
+    return () => stopLandingMusic();
+  }, []);
+
   /* Wait for full video (8s) before advancing */
   useEffect(() => {
     const timeout = setTimeout(onComplete, 8000);
@@ -36,6 +43,7 @@ export default function Scan({ onComplete }) {
         className="scan-bg-video"
         src={`${import.meta.env.BASE_URL}transition.mp4`}
         autoPlay
+        muted
         playsInline
       />
       <div className="scan-video-overlay" />

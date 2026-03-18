@@ -42,6 +42,7 @@ export default function Final({ onReplay }) {
             className="final-bg-video"
             src={`${import.meta.env.BASE_URL}identity-video.mp4`}
             autoPlay
+            muted
             playsInline
           />
           <div className="final-video-overlay" />
