@@ -5,7 +5,7 @@ export default function Landing({ onStart }) {
 
   return (
     <div className="screen landing">
-      <img src="/landing-bg.png" alt="" className="landing-bg-img" aria-hidden="true" />
+      <img src={`${import.meta.env.BASE_URL}landing-bg.png`} alt="" className="landing-bg-img" aria-hidden="true" />
       <div className="landing-overlay" />
 
       {/* TOP: Title + chips */}

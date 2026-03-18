@@ -41,7 +41,7 @@ export default function Final({ onReplay }) {
           <video
             ref={videoRef}
             className="final-bg-video"
-            src="/identity-video.mp4"
+            src={`${import.meta.env.BASE_URL}identity-video.mp4`}
             autoPlay
             muted
             playsInline
@@ -92,7 +92,7 @@ export default function Final({ onReplay }) {
       {/* Phase 4 — Full-screen image with text overlay */}
       {phase === 4 && (
         <div className="final-reveal fade-in">
-          <img src="/dan-retro.png" alt="Dan" className="final-fullscreen-img" />
+          <img src={`${import.meta.env.BASE_URL}dan-retro.png`} alt="Dan" className="final-fullscreen-img" />
           <div className="final-overlay">
             <div className="final-overlay-top">
               <div className="final-orange-banner">IDENTITY CONFIRMED</div>

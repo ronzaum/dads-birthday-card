@@ -46,7 +46,7 @@ export default function Scan({ onComplete }) {
       <video
         ref={videoRef}
         className="scan-bg-video"
-        src="/transition.mp4"
+        src={`${import.meta.env.BASE_URL}transition.mp4`}
         autoPlay
         muted
         playsInline
