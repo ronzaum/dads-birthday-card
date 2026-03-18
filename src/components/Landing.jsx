@@ -1,11 +1,25 @@
-import { useState } from "react";
-import { playPress } from "../sounds";
+import { useState, useEffect } from "react";
+import { playPress, playLandingMusic, stopLandingMusic } from "../sounds";
 
 export default function Landing({ onStart }) {
   const [pressed, setPressed] = useState(false);
+  const [musicStarted, setMusicStarted] = useState(false);
+
+  /* Stop music when leaving the landing page */
+  useEffect(() => {
+    return () => stopLandingMusic();
+  }, []);
+
+  /* Start music on first tap anywhere on the page (iOS needs user gesture) */
+  const handleTap = () => {
+    if (!musicStarted) {
+      playLandingMusic();
+      setMusicStarted(true);
+    }
+  };
 
   return (
-    <div className="screen landing">
+    <div className="screen landing" onTouchStart={handleTap} onClick={handleTap}>
       <img src={`${import.meta.env.BASE_URL}landing-bg.png`} alt="" className="landing-bg-img" aria-hidden="true" />
       <div className="landing-overlay" />
 

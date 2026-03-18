@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import confetti from "canvas-confetti";
-import { playPress } from "../sounds";
+import { playPress, playVictory } from "../sounds";
 
 const dadJoke = "I'm not 61. I'm 21 with 40 years of experience.";
 
@@ -18,6 +18,7 @@ export default function Final({ onReplay }) {
 
   useEffect(() => {
     if (phase === 4) {
+      playVictory();
       const fire = (opts) =>
         confetti({
           particleCount: 100,
