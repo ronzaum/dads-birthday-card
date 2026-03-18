@@ -1,12 +1,10 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import confetti from "canvas-confetti";
 
 const dadJoke = "I'm not 61. I'm 21 with 40 years of experience.";
 
 export default function Final({ onReplay }) {
   const [phase, setPhase] = useState(0);
-  const videoRef = useRef(null);
-
   useEffect(() => {
     const timers = [
       setTimeout(() => setPhase(1), 2400),
@@ -39,17 +37,11 @@ export default function Final({ onReplay }) {
       {phase < 4 && (
         <>
           <video
-            ref={videoRef}
             className="final-bg-video"
             src={`${import.meta.env.BASE_URL}identity-video.mp4`}
             autoPlay
             muted
             playsInline
-            onCanPlay={() => {
-              setTimeout(() => {
-                if (videoRef.current) videoRef.current.muted = false;
-              }, 100);
-            }}
           />
           <div className="final-video-overlay" />
         </>

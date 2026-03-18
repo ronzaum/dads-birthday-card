@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 
 const scanLines = [
   "Scanning memory database…",
@@ -10,8 +10,6 @@ const scanLines = [
 
 export default function Scan({ onComplete }) {
   const [visibleLines, setVisibleLines] = useState(0);
-  const videoRef = useRef(null);
-
   useEffect(() => {
     const interval = setInterval(() => {
       setVisibleLines((prev) => {
@@ -32,25 +30,14 @@ export default function Scan({ onComplete }) {
     return () => clearTimeout(timeout);
   }, [onComplete]);
 
-  /* Try to unmute after autoplay starts (muted needed for autoplay policy) */
-  const handleCanPlay = () => {
-    setTimeout(() => {
-      if (videoRef.current) {
-        videoRef.current.muted = false;
-      }
-    }, 100);
-  };
-
   return (
     <div className="screen scan">
       <video
-        ref={videoRef}
         className="scan-bg-video"
         src={`${import.meta.env.BASE_URL}transition.mp4`}
         autoPlay
         muted
         playsInline
-        onCanPlay={handleCanPlay}
       />
       <div className="scan-video-overlay" />
 
