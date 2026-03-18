@@ -1,16 +1,37 @@
-# React + Vite
+# Dan's Birthday Card 🎂
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+An interactive, retro-styled "birthday verification system" — a fun gamified birthday card for Dan's 60th birthday. Built with a nostalgic 80s/90s arcade aesthetic.
 
-Currently, two official plugins are available:
+## How It Works
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+The app guides users through a multi-screen experience:
 
-## React Compiler
+1. **Landing** — "DAN VERIFICATION SYSTEM" splash screen with retro stats (Threat Level: CAKE, Age: LVL 60, Status: LEGEND)
+2. **Scan** — A scanning/loading phase
+3. **Questions** — Multiple choice trivia questions about Dan
+4. **Result** — Score reveal
+5. **Final** — Celebration with confetti and replay option
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Tech Stack
 
-## Expanding the ESLint configuration
+- React 19 + Vite
+- canvas-confetti for celebrations
+- Retro fonts: Press Start 2P, VT323, Space Grotesk
+- Custom CSS with retro styling and fade transitions
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## Development
+
+```bash
+npm install
+npm run dev
+```
+
+## Deployment
+
+Deployed to GitHub Pages via the `gh-pages` package:
+
+```bash
+npm run deploy
+```
+
+This builds the app and pushes to the `gh-pages` branch, serving at `<username>.github.io/dads-birthday-card/`.
