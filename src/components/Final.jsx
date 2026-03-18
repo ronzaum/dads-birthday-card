@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import confetti from "canvas-confetti";
+import { playPress } from "../sounds";
 
 const dadJoke = "I'm not 61. I'm 21 with 40 years of experience.";
 
@@ -95,7 +96,7 @@ export default function Final({ onReplay }) {
               <p className="final-love-sm">Love you. Happy Birthday.</p>
               <div className="final-joke-banner">{dadJoke}</div>
               {onReplay && (
-                <button className="btn-replay" onClick={onReplay}>
+                <button className="btn-replay" onClick={() => { playPress(); onReplay(); }}>
                   Replay
                 </button>
               )}

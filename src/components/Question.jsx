@@ -1,5 +1,6 @@
 import { useState } from "react";
 import questions, { correctFeedback, wrongFeedback } from "../data/questions";
+import { playCorrect, playWrong } from "../sounds";
 
 export default function Question({ index, onAnswer }) {
   const [selected, setSelected] = useState(null);
@@ -12,6 +13,7 @@ export default function Question({ index, onAnswer }) {
     setSelected(optionIndex);
 
     const isCorrect = optionIndex === q.correct;
+    isCorrect ? playCorrect() : playWrong();
     const pool = isCorrect ? correctFeedback : wrongFeedback;
     setFeedback(pool[index % pool.length]);
 

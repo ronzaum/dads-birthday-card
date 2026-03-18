@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { playPress } from "../sounds";
 
 export default function Landing({ onStart }) {
   const [pressed, setPressed] = useState(false);
@@ -47,10 +48,12 @@ export default function Landing({ onStart }) {
           onMouseDown={() => setPressed(true)}
           onTouchEnd={() => {
             setPressed(false);
+            playPress();
             onStart();
           }}
           onMouseUp={() => {
             setPressed(false);
+            playPress();
             onStart();
           }}
         >
