@@ -40,7 +40,13 @@ html, body, #root {
   height: 100%;
   object-fit: cover;
   pointer-events: none;
-  transition: opacity 0.3s ease;
+  z-index: 2;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+
+.persistent-video.visible {
+  opacity: 1;
 }
 
 /* Grid pattern overlay */

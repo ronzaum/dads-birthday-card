@@ -15,16 +15,19 @@ export default function App() {
   const [transitioning, setTransitioning] = useState(false);
 
   /*
-   * Persistent video refs — these live at the App level so we can call
-   * .play() synchronously in click handlers (iOS requires this for sound).
-   * The 400ms transition setTimeout breaks the user gesture chain,
-   * so videos must start playing BEFORE the timeout.
+   * Persistent video refs — always in the DOM so .play() can be called
+   * synchronously in click handlers (iOS requires user gesture context).
    */
   const scanVideoRef = useRef(null);
   const finalVideoRef = useRef(null);
 
-  /* Track whether final video should be visible (phases 0-3) */
-  const [showFinalVideo, setShowFinalVideo] = useState(false);
+  /*
+   * Video visibility is tracked as dedicated state, set IMMEDIATELY
+   * in click handlers (not derived from screen state). This avoids
+   * a 400ms gap where the video plays but is invisible.
+   */
+  const [scanVideoVisible, setScanVideoVisible] = useState(false);
+  const [finalVideoVisible, setFinalVideoVisible] = useState(false);
 
   const transition = useCallback((nextScreen) => {
     setTransitioning(true);
@@ -34,24 +37,24 @@ export default function App() {
     }, 400);
   }, []);
 
-  /*
-   * START SCAN handler — plays scan video synchronously in the tap context
-   * (before setTimeout), so iOS allows sound playback.
-   */
+  /* START SCAN — show + play video immediately, then transition */
   const handleStart = useCallback(() => {
     const vid = scanVideoRef.current;
     if (vid) {
       vid.currentTime = 0;
       vid.play();
     }
+    setScanVideoVisible(true);
     transition("scan");
   }, [transition]);
 
-  /*
-   * Answer handler — on the LAST question, plays final video synchronously
-   * in the tap context so iOS allows sound. The video plays hidden during
-   * the result screen, then becomes visible on the final screen.
-   */
+  /* Scan complete — fade out video, then transition to questions */
+  const handleScanComplete = useCallback(() => {
+    setScanVideoVisible(false);
+    transition("questions");
+  }, [transition]);
+
+  /* Answer handler — last question starts final video immediately */
   const handleAnswer = useCallback(
     (isCorrect) => {
       if (isCorrect) setScore((s) => s + 1);
@@ -62,21 +65,29 @@ export default function App() {
           setTransitioning(false);
         }, 400);
       } else {
-        /* Last question — start final video NOW (user gesture context) */
         const vid = finalVideoRef.current;
         if (vid) {
           vid.currentTime = 0;
           vid.play();
         }
-        setShowFinalVideo(true);
+        setFinalVideoVisible(true);
         transition("result");
       }
     },
     [questionIndex, transition]
   );
 
+  /* Final phase 4 — hide video, show photo */
+  const handleFinalPhaseChange = useCallback((phase) => {
+    if (phase >= 4) {
+      setFinalVideoVisible(false);
+    }
+  }, []);
+
+  /* Replay — hide everything, reset */
   const handleReplay = useCallback(() => {
-    setShowFinalVideo(false);
+    setFinalVideoVisible(false);
+    setScanVideoVisible(false);
     setTransitioning(true);
     setTimeout(() => {
       setScreen("landing");
@@ -86,38 +97,24 @@ export default function App() {
     }, 400);
   }, []);
 
-  /* Hide final video when leaving the final screen */
-  const handleFinalPhaseChange = useCallback((phase) => {
-    if (phase >= 4) {
-      setShowFinalVideo(false);
-    }
-  }, []);
-
-  /* Determine which persistent video is visible */
-  const scanVideoVisible = screen === "scan";
-  const finalVideoVisible = showFinalVideo && (screen === "result" || screen === "final");
-
   return (
     <div className="app-container">
       <RetroBackground />
 
-      {/*
-       * Persistent video elements — always in DOM so .play() can be called
-       * synchronously from click handlers. Visibility toggled via CSS.
-       */}
+      {/* Persistent videos — constant z-index, only opacity toggles */}
       <video
         ref={scanVideoRef}
-        className="persistent-video"
+        className={`persistent-video ${scanVideoVisible ? "visible" : ""}`}
         src={`${import.meta.env.BASE_URL}transition.mp4`}
         playsInline
-        style={{ opacity: scanVideoVisible ? 1 : 0, zIndex: scanVideoVisible ? 2 : -1 }}
+        loop
       />
       <video
         ref={finalVideoRef}
-        className="persistent-video"
+        className={`persistent-video ${finalVideoVisible ? "visible" : ""}`}
         src={`${import.meta.env.BASE_URL}identity-video.mp4`}
         playsInline
-        style={{ opacity: finalVideoVisible ? 1 : 0, zIndex: finalVideoVisible ? 2 : -1 }}
+        loop
       />
 
       <div className={`screen-wrapper ${transitioning ? "fade-out" : "fade-in"}`}>
@@ -125,7 +122,7 @@ export default function App() {
           <Landing onStart={handleStart} />
         )}
         {screen === "scan" && (
-          <Scan onComplete={() => transition("questions")} />
+          <Scan onComplete={handleScanComplete} />
         )}
         {screen === "questions" && (
           <Question key={questionIndex} index={questionIndex} onAnswer={handleAnswer} />
