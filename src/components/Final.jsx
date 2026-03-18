@@ -1,27 +1,12 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import confetti from "canvas-confetti";
 import { playPress, playVictory } from "../sounds";
 
 const dadJoke = "I'm not 61. I'm 21 with 40 years of experience.";
 
-export default function Final({ onReplay }) {
+export default function Final({ onReplay, onPhaseChange }) {
   const [phase, setPhase] = useState(0);
-  const videoRef = useRef(null);
 
-  /* Try to unmute final video after it starts playing */
-  useEffect(() => {
-    const vid = videoRef.current;
-    if (!vid) return;
-    const tryUnmute = () => {
-      vid.muted = false;
-      vid.play().catch(() => {
-        vid.muted = true;
-        vid.play();
-      });
-    };
-    vid.addEventListener("playing", tryUnmute, { once: true });
-    return () => vid.removeEventListener("playing", tryUnmute);
-  }, []);
   useEffect(() => {
     const timers = [
       setTimeout(() => setPhase(1), 2400),
@@ -31,6 +16,11 @@ export default function Final({ onReplay }) {
     ];
     return () => timers.forEach(clearTimeout);
   }, []);
+
+  /* Notify parent of phase changes (to hide video at phase 4) */
+  useEffect(() => {
+    if (onPhaseChange) onPhaseChange(phase);
+  }, [phase, onPhaseChange]);
 
   useEffect(() => {
     if (phase === 4) {
@@ -51,20 +41,8 @@ export default function Final({ onReplay }) {
 
   return (
     <div className="screen final">
-      {/* Video background for phases 0-3 */}
-      {phase < 4 && (
-        <>
-          <video
-            ref={videoRef}
-            className="final-bg-video"
-            src={`${import.meta.env.BASE_URL}identity-video.mp4`}
-            autoPlay
-            muted
-            playsInline
-          />
-          <div className="final-video-overlay" />
-        </>
-      )}
+      {/* Video is rendered at App level — overlay sits on top */}
+      {phase < 4 && <div className="final-video-overlay" />}
 
       {/* Phase 0 — Processing animation */}
       {phase === 0 && (
