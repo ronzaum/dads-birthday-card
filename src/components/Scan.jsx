@@ -36,7 +36,6 @@ export default function Scan({ onComplete }) {
         className="scan-bg-video"
         src={`${import.meta.env.BASE_URL}transition.mp4`}
         autoPlay
-        muted
         playsInline
       />
       <div className="scan-video-overlay" />
