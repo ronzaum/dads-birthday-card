@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { playLandingMusic, stopLandingMusic } from "../sounds";
 
 const scanLines = [
@@ -11,6 +11,24 @@ const scanLines = [
 
 export default function Scan({ onComplete }) {
   const [visibleLines, setVisibleLines] = useState(0);
+  const videoRef = useRef(null);
+
+  /* Try to unmute video after it starts playing */
+  useEffect(() => {
+    const vid = videoRef.current;
+    if (!vid) return;
+    const tryUnmute = () => {
+      vid.muted = false;
+      vid.play().catch(() => {
+        /* iOS blocked unmuted playback — fall back to muted */
+        vid.muted = true;
+        vid.play();
+      });
+    };
+    vid.addEventListener("playing", tryUnmute, { once: true });
+    return () => vid.removeEventListener("playing", tryUnmute);
+  }, []);
+
   useEffect(() => {
     const interval = setInterval(() => {
       setVisibleLines((prev) => {
@@ -40,6 +58,7 @@ export default function Scan({ onComplete }) {
   return (
     <div className="screen scan">
       <video
+        ref={videoRef}
         className="scan-bg-video"
         src={`${import.meta.env.BASE_URL}transition.mp4`}
         autoPlay
